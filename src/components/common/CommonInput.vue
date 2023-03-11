@@ -1,7 +1,7 @@
 <template>
   <q-input 
-    v-model="model" 
-    :label="label" 
+    v-model="model"
+    :placeholder="placeholder"
     :type="isPassword && type === 'password' ? 'text' : type" 
     class="common-input"
   > 
@@ -38,7 +38,7 @@ const props = defineProps({
     type: [String, Number],
     default: ''
   },
-  label: {
+  placeholder: {
     type: String,
     default: ''
   },
@@ -61,6 +61,9 @@ const model = computed({
 
 <style lang="scss">
 .common-input {
+  input {
+    font-size: 17px;
+  }
   .q-field__label {
     color: #000 !important;
     font-size: 17px;

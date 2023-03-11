@@ -1,16 +1,16 @@
 <template>
   <q-dialog seamless full-width v-model="show" class="login-dialog" >
     <q-card class="q-px-sm">
-      <q-card-section>
+      <q-card-section  class="q-my-sm">
         <div class="login">Login</div>
       </q-card-section>
 
       <q-card-section class="q-pt-none">
         <div class="q-mb-lg">
-          <common-input v-model="account.email" label="Email" class="q-mb-md"/>
-          <common-input v-model="account.password" label="Password" type="password"/>
+          <common-input v-model="account.email" placeholder="Email" class="q-mb-lg"/>
+          <common-input v-model="account.password" placeholder="Password" type="password"/>
         </div>
-        <div class="forgot-pwd">Or Forgot password</div>
+        <div class="forgot-pwd text-size-15">Or Forgot password</div>
       </q-card-section>
 
       <q-card-actions class="q-px-md">
@@ -23,7 +23,7 @@
           rounded 
           unelevated 
         />
-        <p class="q-my-lg">Don’t have an account? 
+        <p class="q-my-lg text-size-15">Don’t have an account? 
           <router-link :to="{ name: 'register' }" class="text-red sign-up">Sign up for free</router-link>
         </p>
       </q-card-actions>
@@ -48,15 +48,15 @@ const account = ref<Login>({
     border-radius: 12px;
   }
   .login {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
     font-style: normal;
-    font-weight: 700;
-    font-size: 24px;
+    font-size: 30px;
     line-height: 33px;
     padding-top: 20px;
   }
   .btn-submit {
     border-radius: 100px;
-    background: #F40000;
   }
   .forgot-pwd {
     color: #686868;
