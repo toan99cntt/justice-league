@@ -1,5 +1,6 @@
 import type { RouteRecordRaw } from "vue-router";
 import MainLayout from "@/layouts/MainLayout.vue";
+import MenuLayout from "@/layouts/MenuLayout.vue";
 import HomeView from '@/pages/HomeView.vue';
 import Login from '@/pages/Login.vue';
 import Register from '@/pages/Register.vue';
@@ -11,8 +12,10 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: "",
-        name: "home",
-        component: HomeView,
+        component: MenuLayout,
+        children: [
+          { path: '/', name: "home", component: HomeView }
+        ]
       },
       {
         path: "/login",
