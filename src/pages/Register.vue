@@ -31,7 +31,7 @@
 import type { Register } from '@/models/auth';
 import { ref } from 'vue';
 
-const show = true;
+const show = ref(true);
 const account = ref<Register>({
   email: '',
   password: '',

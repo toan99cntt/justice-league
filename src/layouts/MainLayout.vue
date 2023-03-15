@@ -4,9 +4,9 @@
 
     <q-page-container >
       <q-page class="main-content" :class="{ 'bg-login': isLayoutLogin }">
-        <q-page>
+        <div class="container">
           <router-view />
-        </q-page>
+        </div>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -25,6 +25,10 @@ const isLayoutLogin = computed(() => route.name === 'login' || route.name === 'r
 <style lang="scss" scoped>
 .main-content {
   background-color: #f8f9fd;
+  .container {
+    height: calc(100vh - 65px);
+    width: 100%;
+  }
 }
 .bg-login {
   background-image: url('@/assets/images/bg.png');
@@ -32,7 +36,7 @@ const isLayoutLogin = computed(() => route.name === 'login' || route.name === 'r
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  .q-page {
+  .container {
     background: rgba(17, 17, 17, 0.5);
     backdrop-filter: blur(7.5px);
   }
