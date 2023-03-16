@@ -16,7 +16,6 @@ const props = defineProps({
     type: String,
     required: true
   },
-
 })
 
 const src = computed(() => new URL(`/src/assets/icons/${props.name}.svg`, import.meta.url).href)
