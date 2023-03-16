@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import MainHeader from "@/layouts/MainHeader.vue";
 import { computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 
 const route = useRoute();
 
@@ -28,6 +28,7 @@ const isLayoutLogin = computed(() => route.name === 'login' || route.name === 'r
   .container {
     height: calc(100vh - 65px);
     width: 100%;
+    background: #fff;
   }
 }
 .bg-login {
