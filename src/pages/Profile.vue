@@ -25,28 +25,20 @@
       </q-tabs>
       <q-separator />
     </div>
-
-    <div class="col-12 row list-item">
-      <div v-for="(item, key) in 6" :key="key"  class="col-6 col-sm-4 text-size-13 card">
-        <common-card/>
-        <!-- <div>#Capcut #bongda #hocduong.. </div>
-        <div>Amet minim mollit non deser... </div>
-        <div class="row">
-          <div class="col-9">
-            <q-avatar
-              size="20px"
-              class="overlapping q-mr-sm"
-            >
-              <img :src="`https://cdn.quasar.dev/img/avatar1.jpg`">
-            </q-avatar>
-            Dieu Linh Tokyo 
+    <q-tab-panels v-model="tab" animated>
+      <q-tab-panel name="follow" class="q-pa-none">
+        <div class="col-12 row list-item">
+          <div v-for="(item, key) in 6" :key="key"  class="col-6 col-sm-4 text-size-13 card">
+            <common-card disableClickName/>
           </div>
-          <div class="col-3 text-grey-6 text-right">
-            2.3k <common-icon name="heart-red" size="14px" class="q-pb-xs"/>
-          </div>
-        </div> -->
-      </div>
-    </div>
+        </div>
+      </q-tab-panel>
+      <q-tab-panel name="orther" class="q-pa-none">
+        <div class="col-12 text-center">
+          <common-icon name="not-found" size="150px" />
+        </div>
+      </q-tab-panel>
+    </q-tab-panels>
   </div>
 </template>
 
@@ -56,7 +48,7 @@ import { ref } from "vue";
 const tab = ref('follow');
 const actions = [
   { name: 'follow', label: 'Follow', icon: 'magic-bold' },
-  { name: 'liked', label: 'Liked', icon: 'heart-gray' },
+  { name: 'orther', label: 'Liked', icon: 'heart-gray' },
   { name: 'saved', label: 'Saved', icon: 'save-gray' },
   { name: 'block', label: 'Hide/Block', icon: 'block-gray' },
 ]

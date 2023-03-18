@@ -6,6 +6,7 @@ import Profile from '@/pages/Profile.vue';
 import Login from '@/pages/Login.vue';
 import Register from '@/pages/Register.vue';
 import Search from '@/pages/Search.vue';
+import UserDetail from '@/pages/UserDetail.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -19,6 +20,7 @@ const routes: RouteRecordRaw[] = [
           { path: '/', name: "home", component: HomeView },
           { path: '/profile', name: "profile", component: Profile },
           { path: '/search', name: "search", component: Search },
+          { path: '/user-detail', name: "userDetail", component: UserDetail },
         ]
       },
       {
