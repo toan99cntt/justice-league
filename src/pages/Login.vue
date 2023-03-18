@@ -22,6 +22,7 @@
           size="16px" 
           rounded 
           unelevated 
+          @click="$router.push({ name: 'home' })"
         />
         <p class="q-my-lg text-size-15">Don’t have an account? 
           <router-link :to="{ name: 'register' }" class="text-red sign-up">Sign up for free</router-link>

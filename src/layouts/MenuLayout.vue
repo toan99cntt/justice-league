@@ -32,8 +32,8 @@ const menus = computed(() => {
   const isHomePage = route.name === 'home';
   return [
     { label: 'Homepage', name: 'home', icon: isHomePage ? 'home-white' : 'home-gray', routeName: 'home' },
-    { label: 'Explore', name: 'explore', icon: isHomePage ? 'radar-white' : 'radar-gray', routeName: 'home' },
-    { label: 'Follow', name: 'pollow', icon: isHomePage ? 'magic-star-white' : 'magic-gray', routeName: 'home' },
+    { label: 'Explore', name: 'explore', icon: isHomePage ? 'radar-white' : 'radar-gray', routeName: '' },
+    { label: 'Follow', name: 'pollow', icon: isHomePage ? 'magic-star-white' : 'magic-gray', routeName: '' },
     { label: 'Profile', name: 'profile', icon: isHomePage ? 'profile-white' : 'profile-gray', routeName: 'profile' },
   ]
 })
