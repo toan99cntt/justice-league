@@ -1,6 +1,9 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import type { RouteParams } from "vue-router";
 import routes from "./router";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { storeToRefs } from "pinia";
+import { useAuth } from "@/services/domains/auth/useAuth";
 
 export type MetaRouter = {
   meta: {
@@ -29,14 +32,18 @@ export function routerPush(
 }
 
 router.beforeEach(async (to, from, next) => {
- 
-  // if (to.matched.some((r: MetaRouter) => !!r.meta.auth)) {
-  //   return next({ name: "login" });
-  // }
+  const authStore = useAuthStore();
+  const {isAuthenticated, userProfile} = storeToRefs(authStore);
+  await useAuth().authCheck();
 
-  // if (to.matched.some((r: MetaRouter) => !!r.meta.guess)) {
-  //   return next({ name: "home" });
-  // }
+  if (to.matched.some((r: MetaRouter) => !!r.meta.auth) && !isAuthenticated.value) {
+    return next({name: 'login'});
+  }
+  else if (isAuthenticated.value) {
+    if(!Object.keys(userProfile.value).length) await useAuth().getUserInfo();
+
+    if(to.matched.some((r: MetaRouter) => !!r.meta.guess)) return next({name: 'home'});
+  }
 
   return next();
 });

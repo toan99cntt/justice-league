@@ -6,19 +6,20 @@
       v-for="(item, index) in histories"
       :key="index"
       v-show="checkShowItem(index)"
+      @click="fillSearch(item)"
     >
       <q-item-section class="q-pr-none lock">
         <common-icon name="clock" size="16px" />
       </q-item-section>
       <q-item-section>{{ item }}</q-item-section>
       <q-item-section side>
-        <common-icon name="close" size="10px" />
+        <common-icon @click.stop="removeResultSearch(index)" name="close" size="10px" />
       </q-item-section>
     </q-item>
   </q-list>
   <div class="show-full text-center">
-    <span class="text-grey-8" @click="showFull = !showFull">
-      {{ `${showFull ? 'Thu gọn' : 'Xem thêm'}` }} <common-icon name="down" size="7px" />
+    <span class="text-grey-8 " @click="showFull = !showFull">
+      {{ `${showFull ? 'Thu gọn' : 'Xem thêm'}` }} <common-icon name="down" size="7px" class="display-inline"/>
     </span>
   </div>
 
@@ -37,7 +38,7 @@
       :key="index"
     >
       <q-item-section class="icon-star">
-        <common-icon :name="getIconSuggest(index)" size="10px" />
+        <common-icon name="star" size="10px" :colorCode="getIconSuggest(index)"/>
       </q-item-section>
       <q-item-section>{{ item }}</q-item-section>
     </q-item>
@@ -47,7 +48,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-
+const emits = defineEmits(['search'])
 const showFull = ref(false);
 const histories = ref([
   'Đồ hàn',
@@ -77,11 +78,19 @@ const suggests = ref([
 
 const getIconSuggest = (index: number)  => {
   switch(index) {
-    case 0: return 'star-1'; 
-    case 1: return 'star-2'; 
-    case 2: return 'star-3'; 
-    default: return 'star-4'; 
+    case 0: return 'red'; 
+    case 1: return '#FF9900'; 
+    case 2: return '#34C86F'; 
+    default: return '#DDDDDD'; 
   }
+}
+
+const removeResultSearch = (index: number) => {
+  histories.value.splice(index, 1)
+}
+
+const fillSearch = (search: string) => {
+  emits('search', search)
 }
 
 const checkShowItem = (index: number) => {

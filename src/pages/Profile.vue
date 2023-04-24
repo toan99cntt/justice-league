@@ -1,49 +1,59 @@
 <template>
-  <div class="root">
-    <div class="text-center q-pt-md">
-      <p class="text-bold text-size-17">Dieu Linh Tokyo</p>
-      <q-avatar size="120px">
-        <img src="@/assets/images/avatar.png">
-      </q-avatar>
-      <p class="text-size-15">@JessicaPMzz</p>
-    </div>
-
-    <div class="q-mb-md">
-      <q-tabs
-        v-model="tab"
-        no-caps
-        narrow-indicator
-        align="justify"
-        class="text-white full-width tab"
-        :class="{ 'text-grey-8 bg-white': $route.name !== 'home'}"
-        :breakpoint="0"
-      >
-        <q-tab v-for="(item, key) in actions" :key="key" :name="item.name"> 
-          <common-icon :name="item.icon" size="21px"/>
-          <p class="text-size-13">{{item.label}}</p>
-        </q-tab>
-      </q-tabs>
-      <q-separator />
-    </div>
-    <q-tab-panels v-model="tab" animated>
-      <q-tab-panel name="follow" class="q-pa-none">
-        <div class="col-12 row list-item">
-          <div v-for="(item, key) in 6" :key="key"  class="col-6 col-sm-4 text-size-13 card">
-            <common-card disableClickName/>
+  <div class="root row justify-center">
+    <div class="col-12 col-sm-9 col-md-6 col-xl-6">
+      <div class="text-center q-pt-md">
+        <p class="text-bold text-size-17">{{ userProfile.name || 'noName' }}</p>
+        <q-avatar size="120px">
+          <img src="@/assets/images/avatar.png">
+        </q-avatar>
+        <p class="text-size-15">@{{ userProfile.name || 'noName' }}</p>
+      </div>
+  
+      <div class="q-mb-md">
+        <q-tabs
+          v-model="tab"
+          no-caps
+          narrow-indicator
+          align="justify"
+          class="text-white full-width tab"
+          :class="{ 'text-grey-8 bg-white': $route.name !== 'home'}"
+          :breakpoint="0"
+        >
+          <q-tab v-for="(item, key) in actions" :key="key" :name="item.name"> 
+            <common-icon :name="item.icon" size="21px"/>
+            <p class="text-size-13">{{item.label}}</p>
+          </q-tab>
+        </q-tabs>
+        <q-separator />
+      </div>
+      <q-tab-panels v-model="tab" animated>
+        <q-tab-panel 
+          v-for="action in actions"
+          :key="action.name"
+          :name="action.name" 
+          class="q-pa-none"
+        >
+          <div class="text-center">
+            <img style="width: 150px" src="@/assets/icons/not-found.svg" />
           </div>
-        </div>
-      </q-tab-panel>
-      <q-tab-panel name="orther" class="q-pa-none">
-        <div class="col-12 text-center">
-          <common-icon name="not-found" size="150px" />
-        </div>
-      </q-tab-panel>
-    </q-tab-panels>
+          <!-- <div class="col-12 row list-item">
+            <div v-for="(item, key) in 6" :key="key"  class="col-6 col-sm-4 text-size-13 card">
+              <common-card disableClickName/>
+            </div>
+          </div> -->
+        </q-tab-panel>
+      </q-tab-panels>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useAuthStore } from "@/stores/useAuthStore";
+import { storeToRefs } from "pinia";
 import { ref } from "vue";
+
+const authStore = useAuthStore();
+const {userProfile} = storeToRefs(authStore);
 
 const tab = ref('follow');
 const actions = [

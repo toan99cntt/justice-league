@@ -1,7 +1,8 @@
 import type { RouteRecordRaw } from "vue-router";
 import MainLayout from "@/layouts/MainLayout.vue";
 import MenuLayout from "@/layouts/MenuLayout.vue";
-import HomeView from '@/pages/HomeView.vue';
+import Home from '@/pages/Home.vue';
+import Explore from '@/pages/Explore.vue';
 import Profile from '@/pages/Profile.vue';
 import Login from '@/pages/Login.vue';
 import Register from '@/pages/Register.vue';
@@ -17,8 +18,9 @@ const routes: RouteRecordRaw[] = [
         path: "",
         component: MenuLayout,
         children: [
-          { path: '/', name: "home", component: HomeView },
-          { path: '/profile', name: "profile", component: Profile },
+          { path: '/', name: "home", component: Home },
+          { path: '/explore', name: "explore", component: Explore },
+          { path: '/profile', name: "profile", component: Profile, meta: { auth: true } },
           { path: '/search', name: "search", component: Search },
           { path: '/user-detail', name: "userDetail", component: UserDetail },
         ]
@@ -27,11 +29,13 @@ const routes: RouteRecordRaw[] = [
         path: "/login",
         name: "login",
         component: Login,
+        meta: { guess: true },
       },
       {
         path: "/register",
         name: "register",
         component: Register,
+        meta: { guess: true },
       },
     ],
   },

@@ -1,7 +1,9 @@
 <template>
   <q-input 
     v-model="model"
+    :error="!!errors.length"
     :placeholder="placeholder"
+    hide-bottom-space
     :type="isPassword && type === 'password' ? 'text' : type" 
     class="common-input"
   > 
@@ -11,6 +13,9 @@
         class="cursor-pointer"
         @click="isPassword = !isPassword"
       />
+    </template>
+    <template v-slot:error>
+      {{ errors[0] }}
     </template>
   </q-input>
 </template>
@@ -45,7 +50,11 @@ const props = defineProps({
   type: {
     type: String as PropType<TypeInput>,
     default: 'text'
-  }
+  },
+  errors: {
+    type: Array as PropType<String[]>,
+    default: () => [],
+  },
 })
 
 const emits = defineEmits(["update:modelValue"])

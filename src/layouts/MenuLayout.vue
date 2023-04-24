@@ -6,7 +6,7 @@
       no-caps
       align="justify"
       class="text-white full-width tab"
-      :class="{ 'text-grey-8 bg-white': $route.name !== 'home'}"
+      :class="{ 'text-grey-8 bg-white': !isShowVideo}"
       indicator-color="transparent"
       :breakpoint="0"
     >
@@ -15,8 +15,8 @@
         :key="key" :name="item.name"
         @click="$router.push({ name: item.routeName })"
       > 
-        <common-icon :name="item.icon" size="23px"/>
-        <p class="text-size-13">{{item.label}}</p>
+        <common-icon :name="item.icon" size="23px" :color="getColorAction(item.routeName)"/>
+        <p :class="`text-size-13 text-${getColorAction(item.routeName)}`">{{item.label}}</p>
       </q-tab>
     </q-tabs>
   </div>
@@ -27,16 +27,27 @@ import { computed } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
+const routeAccept = ['home', 'explore']
 
 const menus = computed(() => {
-  const isHomePage = route.name === 'home';
+  const iconHome = route.name === 'home' ? 'home' : 'home-outline'
   return [
-    { label: 'Homepage', name: 'home', icon: isHomePage ? 'home-white' : 'home-gray', routeName: 'home' },
-    { label: 'Explore', name: 'explore', icon: isHomePage ? 'radar-white' : 'radar-gray', routeName: '' },
-    { label: 'Follow', name: 'pollow', icon: isHomePage ? 'magic-star-white' : 'magic-gray', routeName: '' },
-    { label: 'Profile', name: 'profile', icon: isHomePage ? 'profile-white' : 'profile-gray', routeName: 'profile' },
+    { label: 'Homepage', name: 'home', icon: iconHome, routeName: 'home' },
+    { label: 'Explore', name: 'explore', icon: 'radar', routeName: 'explore' },
+    { label: 'Follow', name: 'follow', icon: 'magic-star', routeName: '' },
+    { label: 'Profile', name: 'profile', icon: 'profile', routeName: 'profile' },
   ]
 })
+
+const getColorAction = (routeName: string) => {
+  if(!isShowVideo.value) return route.name === routeName  ? 'grey-9' : 'grey-7'
+  return 'white'
+}
+
+const isShowVideo = computed(() => {
+  return routeAccept.some((el) => el === route.name)
+})
+
 </script>
 
 <style lang="scss" scoped>
