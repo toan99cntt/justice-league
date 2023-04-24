@@ -11,7 +11,7 @@
         </q-btn>
       </div>
       <div class="col-6 text-center">
-        <q-img width="141px" height="53.5px" src="src/assets/images/logo.png" />
+        <img @click="$router.push({ name: 'home' })" width="141" height="53.5" src="@/assets/images/logo.png" />
       </div>
       <div class="col-3 text-right">
         <q-btn round unelevated class="bg-gray" @click="$router.push({ name: 'search' })">

@@ -1,14 +1,25 @@
 <template>
   <q-dialog seamless full-width v-model="show" class="login-dialog" >
-    <q-card class="q-px-sm">
+    <q-card class="q-px-sm" style="max-width: 500px !important;">
       <q-card-section  class="q-my-sm">
         <div class="login">Login</div>
       </q-card-section>
 
       <q-card-section class="q-pt-none">
         <div class="q-mb-lg">
-          <common-input v-model="account.email" placeholder="Email" class="q-mb-lg"/>
-          <common-input v-model="account.password" placeholder="Password" type="password"/>
+          <div  class="text-center text-red">{{ errorMsg }}</div>
+          <common-input
+            v-model="account.email" 
+            :errors="errors.email"
+            placeholder="Email" 
+            class="q-mb-lg"
+           />
+          <common-input 
+            v-model="account.password" 
+            :errors="errors.password"
+            placeholder="Password" 
+            type="password"
+          />
         </div>
         <div class="forgot-pwd text-size-15">Or Forgot password</div>
       </q-card-section>
@@ -21,8 +32,9 @@
           class="full-width" 
           size="16px" 
           rounded 
+          :loading="loading"
           unelevated 
-          @click="$router.push({ name: 'home' })"
+          @click="login"
         />
         <p class="q-my-lg text-size-15">Don’t have an account? 
           <router-link :to="{ name: 'register' }" class="text-red sign-up">Sign up for free</router-link>
@@ -33,14 +45,44 @@
 </template>
 
 <script lang="ts" setup>
-import type { Login } from '@/models/auth';
+import type { Login, LoginError } from '@/models/auth';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { authService } from '@/services/domains/auth/request';
+import {useAuthStore} from '@/stores/useAuthStore';
+
+const router = useRouter()
+const authStore = useAuthStore()
 
 const show = ref(true);
+const loading = ref(false);
+const errors = ref({} as LoginError)
+const errorMsg = ref('')
 const account = ref<Login>({
   email: '',
   password: ''
 })
+
+const login = async() =>{
+  errors.value = {} as  LoginError;
+  errorMsg.value = '';
+  try {
+    loading.value = true;
+    const res = await authService.login(account.value);
+    localStorage.setItem('token_data', res.token);
+    authStore.setIsAuthenticated();
+    authStore.setUserProfile(res.user);
+    await router.push({ name: 'home' })
+  } catch (error: any) {
+    if(error.status === 422){
+      errors.value = { ...error.data.errors}
+    } else if(error.status === 401) {
+      errorMsg.value = error.data.msg
+    }
+  } finally {
+    loading.value = false;
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -49,7 +91,7 @@ const account = ref<Login>({
     border-radius: 12px;
   }
   .login {
-    font-family: 'Manrope', sans-serif;
+  font-family: 'Manrope', sans-serif;
     font-weight: 800;
     font-style: normal;
     font-size: 30px;
