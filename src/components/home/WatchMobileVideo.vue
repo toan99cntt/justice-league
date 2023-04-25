@@ -14,7 +14,7 @@
         <q-icon v-show="!statusVideo.error && !statusVideo.loading && statusVideo.paused" class="absolute-center" name="play_arrow" size="46px" color="white"/>
         <q-icon v-if="statusVideo.error" class="absolute-center" name="warning" size="35px" color="white"/>
         <q-spinner-dots v-else-if="!statusVideo.error && statusVideo.loading" class="absolute-center" color="white" size="40px" />
-      <video ref="videoRef" class="video" @click="clickVideo()" reload></video>
+      <video ref="videoRef" class="video" @click="clickVideo()" reload playsinline></video>
       
       <div ref="orangeBar" class="orange-bar" @click.stop="(event) => setTime(event)">
         <div id="time-line" :style="{ width: `${percentTime}%` }">
