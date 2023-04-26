@@ -6,7 +6,7 @@
       transition-next="slide-up"
       swipeable
       animated
-      v-model:fullscreen="fullscreen"
+      v-model:fullscreen="isFullscreen"
       navigation
       padding
       arrows
