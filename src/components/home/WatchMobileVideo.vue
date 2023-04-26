@@ -1,12 +1,15 @@
 <template>
   <q-carousel
-    v-model="slide"
-    v-model:fullscreen="isFullscreen"
-    vertical
-    transition-prev="slide-down"
-    transition-next="slide-up"
-    swipeable
-    animated
+      v-model="slide"
+      vertical
+      transition-prev="slide-down"
+      transition-next="slide-up"
+      swipeable
+      animated
+      v-model:fullscreen="fullscreen"
+      navigation
+      padding
+      arrows
     class="videos"
     @wheel="nextVideo"
   >
