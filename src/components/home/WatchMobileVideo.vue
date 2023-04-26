@@ -8,6 +8,7 @@
     animated
     v-model:fullscreen="isFullscreen"
     @wheel="nextVideo"
+    class="videos"
   >
     <q-carousel-slide ref="containerRef" :img-src="item.image" class="container q-pa-none" v-for="(item, key) in videos" :key="key" :name="key">
       <div class="c-video text-center">
@@ -155,6 +156,9 @@ const setDisplayVideo = () => {
   videoRef.value[0].addEventListener('loadedmetadata',function() {
     videoRef.value[0].play();
   });
+  videoRef.value[0].addEventListener('error', function(evt) {
+    statusVideo.error = true // Object
+});
 }
 
 const setTime = (event: any) => {
@@ -230,7 +234,7 @@ watch(() => slide.value, async(val) => {
   }
 
   .menu-left {
-    position: absolute;
+    position: fixed;
     right: 10px;
     bottom: 100px;
     z-index: 9999;
