@@ -11,7 +11,7 @@ body {
     .glossy, .toolbar {
       height: 65px !important
     }
-    .q-drawer {
+    .q-drawer, .q-header, .footer {
       z-index: 9999  
     }
   }
