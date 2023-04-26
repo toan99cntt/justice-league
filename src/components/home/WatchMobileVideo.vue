@@ -7,9 +7,6 @@
       swipeable
       animated
       v-model:fullscreen="isFullscreen"
-      navigation
-      padding
-      arrows
     class="videos"
     @wheel="nextVideo"
   >
