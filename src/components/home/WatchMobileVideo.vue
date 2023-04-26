@@ -1,6 +1,7 @@
 <template>
   <q-carousel
     v-model="slide"
+    v-model:fullscreen="isFullscreen"
     vertical
     transition-prev="slide-down"
     transition-next="slide-up"
@@ -106,6 +107,7 @@ const statusVideo = reactive({
   paused: false,
 })
 const percentTime = ref(0);
+const isFullscreen = ref(true);
 const wheelTimer = ref(0);
 
 const slide = computed({
