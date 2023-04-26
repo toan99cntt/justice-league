@@ -1,8 +1,8 @@
 <template>
   <div>
     <q-input 
-      dense outlined rounded 
-      standout="bg-white text-black" 
+      dense outlined  rounded
+      color="grey-5"
       v-model="search"
       @focus="$emit('focusInput')"
       @keyup.enter="$emit('onSearch')"
@@ -86,3 +86,9 @@ const search = computed({
   set: (val) => emits('update:modelValue', val)
 })
 </script>
+
+<style>
+.input-search .q-field__control:hover:before {
+  border-color: #ddd !important;
+}
+</style>

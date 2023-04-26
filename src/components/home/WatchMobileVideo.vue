@@ -1,18 +1,24 @@
 <template>
   <q-carousel
-      v-model="slide"
-      vertical
-      transition-prev="slide-down"
-      transition-next="slide-up"
-      swipeable
-      animated
-      v-model:fullscreen="isFullscreen"
-    class="videos"
+    v-model="slide"
+    vertical
+    transition-prev="slide-down"
+    transition-next="slide-up"
+    swipeable
+    animated
+    v-model:fullscreen="isFullscreen"
     @wheel="nextVideo"
   >
     <q-carousel-slide ref="containerRef" :img-src="item.image" class="container q-pa-none" v-for="(item, key) in videos" :key="key" :name="key">
       <div class="c-video text-center">
-        <q-icon v-show="!statusVideo.error && !statusVideo.loading && statusVideo.paused" class="absolute-center" name="play_arrow" size="46px" color="white"/>
+        <q-icon 
+          v-show="!statusVideo.error && !statusVideo.loading && statusVideo.paused" 
+          style="z-index: 9999;"
+          class="absolute-center" 
+          name="play_arrow" 
+          size="46px" 
+          color="white"
+        />
         <q-icon v-if="statusVideo.error" class="absolute-center" name="warning" size="35px" color="white"/>
         <q-spinner-dots v-else-if="!statusVideo.error && statusVideo.loading" class="absolute-center" color="white" size="40px" />
       <video ref="videoRef" class="video" @click="clickVideo()" reload playsinline></video>
@@ -142,7 +148,7 @@ const setDisplayVideo = () => {
     hls.attachMedia(videoRef.value[0]);
     hls.on(Hls.Events.ERROR, () => {
       statusVideo.error = true
-    });
+    }); 
   } else if (videoRef.value[0].canPlayType('application/vnd.apple.mpegurl')) {
     videoRef.value[0].src = src;
   }
@@ -227,6 +233,7 @@ watch(() => slide.value, async(val) => {
     position: absolute;
     right: 10px;
     bottom: 100px;
+    z-index: 9999;
     .avatar {
       border: 2px solid #fff;
       border-radius: 50%;
