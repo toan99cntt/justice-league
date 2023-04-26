@@ -198,8 +198,9 @@ watch(() => slide.value, async(val) => {
 
 <style lang='scss' scoped>
 .videos {
-  padding-top: 65px;
-  overflow: hidden;
+  height: 100%;
+  // padding-top: 65px;
+  // overflow: hidden;
 }
 .container {
   width: 100%;
