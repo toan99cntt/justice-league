@@ -2,7 +2,7 @@
   <q-layout view="lHh Lpr lFf">
     <main-header />
 
-    <q-page-container style="padding-top: 0">
+    <q-page-container >
       <q-page class="main-content" :class="{ 'bg-login': isLayoutLogin }">
         <div class="container">
           <router-view />
@@ -26,8 +26,7 @@ const isLayoutLogin = computed(() => route.name === 'login' || route.name === 'r
 .main-content {
   background-color: #f8f9fd;
   .container {
-    height: 100vh;
-    padding-top: 65px;
+    height: calc(100vh - 65px);
     width: 100%;
     background: #fff;
   }
