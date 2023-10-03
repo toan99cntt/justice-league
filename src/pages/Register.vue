@@ -1,7 +1,16 @@
 <template>
   <q-dialog seamless full-width v-model="show" class="register-dialog" >
     <q-card class="q-px-sm" style="max-width: 500px !important;">
-      <q-card-section class="q-my-sm">
+      <q-card-section class="text-right q-py-sm q-pr-xs">
+        <q-btn
+          icon="close"
+          flat
+          round
+          size="12px"
+          @click="hideDialog"
+        />
+      </q-card-section>
+      <q-card-section class="q-mb-sm q-pt-none">
         <div class="title">Sign up</div>
       </q-card-section>
 
@@ -87,6 +96,13 @@ const register = async() =>{
   } finally {
     loading.value = false;
   }
+}
+
+const hideDialog = () => {
+  show.value = false;
+  setTimeout(() => {
+    router.push({ name: 'home' })
+  }, 100)
 }
 </script>
 

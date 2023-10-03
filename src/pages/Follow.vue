@@ -19,17 +19,17 @@
 import { onMounted, ref, onUnmounted } from "vue";
 import WatchMobileVideo from "@/components/home/WatchMobileVideo.vue"
 import type { Video } from "@/models/video";
-import { homeService } from '@/services/domains/home/request'
+import { followService } from '@/services/domains/follow/request'
 import { videoService } from '@/services/domains/video/request'
 import { getCursorKey } from "@/services/utils/common";
-import { useHomeStore } from "@/stores/useHomeStore";
+import { useFollowStore } from "@/stores/useFollowStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { storeToRefs } from "pinia";
 import { modelService } from "@/services/domains/model/request";
 
-const homeStore = useHomeStore()
+const followStore = useFollowStore()
 const authStore = useAuthStore()
-const { videoIndex, cursorKey, videosStore } = storeToRefs(homeStore)
+const { videoIndex, cursorKey, videosStore } = storeToRefs(followStore)
 
 const videos = ref<Array<Video>>(videosStore.value)
 const userProfile = ref({...authStore.userProfile})
@@ -45,14 +45,13 @@ const likeVideo = async(id: number)=>{
   try {
     loadingLike.value = true
     await videoService.actionLike(id)
-    const liked = videos.value[video.value].liked || false
 
+    const liked = videos.value[video.value].liked
     if(liked) videos.value[video.value].likes--;
     else videos.value[video.value].likes++;
-
-    authStore.setUserAction(liked, 'liked', id)
     videos.value[video.value].liked = !liked;
-    homeStore.setVideos(videos.value)
+
+    followStore.setVideos(videos.value)
   } catch(err) {
     //
   }
@@ -70,8 +69,8 @@ const saveVideo = async (id: number)=>{
 
     authStore.setUserAction(saved, 'saved', id)
     videos.value[video.value].saved = !saved;
-
-    homeStore.setVideos(videos.value)
+    
+    followStore.setVideos(videos.value)
   } catch(err) {
     //
   }
@@ -86,8 +85,8 @@ const hideVideo = async (id: number)=>{
     authStore.setUserAction(false, 'blocked', id)
 
     if(video.value == (videos.value.length - 1)) video.value --
-    else change.value++   
-    homeStore.setVideos(videos.value)
+    else change.value++
+    followStore.setVideos(videos.value)
   } catch(err) {
     //
   }
@@ -96,19 +95,19 @@ const hideVideo = async (id: number)=>{
 
 const fetchData = async() => {
   try{
-    const res = await homeService.getVideos({ cursor: params.value })
+    const res = await followService.getVideosFollow({ cursor: params.value })
     let videosRes = res.items.map((item) => {
       item.liked = userProfile.value.user_data?.liked.includes(item.id)
       item.saved = userProfile.value.user_data?.saved.includes(item.id)
       item.followed = userProfile.value.user_data?.followed.includes(item.id)
       return item
     })
-    videosRes = videosRes.filter(el => !authStore.userProfile?.user_data?.blocked?.includes(el.id))
+    videosRes = videosRes.filter(el => !authStore.userProfile?.user_data?.blocked.includes(el.id))
     videos.value = [ ...videos.value, ...videosRes ]
     params.value = getCursorKey(res.next_page_url)
 
-    homeStore.setVideos(videos.value)
-    homeStore.setLink(getCursorKey(res.next_page_url))
+    followStore.setVideos(videos.value)
+    followStore.setLink(getCursorKey(res.next_page_url))
   } catch(err) {
     //
   }
@@ -121,7 +120,7 @@ const followModel = async(id: number) => {
     videos.value[video.value].followed = true;
     authStore.setUserAction(false, 'followed', id)
     
-    homeStore.setVideos(videos.value)
+    followStore.setVideos(videos.value)
   } catch(err) {
     //
   }
@@ -129,19 +128,11 @@ const followModel = async(id: number) => {
 }
 
 onMounted( async () => {
-  if(videosStore.value.length) {
-    if(authStore.isAuthenticated) {
-      videos.value.map(el => {
-        el.followed = authStore.userProfile?.user_data?.followed?.includes(el.model_id) || false
-        return el
-      })
-    }
-    return;
-  }
+  if(videosStore.value.length) return;
   await fetchData();
 })
 
 onUnmounted(() => {
-  homeStore.setVideoValue(video.value)
+  followStore.setVideoValue(video.value)
 })
 </script>

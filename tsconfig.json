@@ -6,7 +6,8 @@
     "allowJs": true,
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "lib": ["es2017", "dom"]
   },
 
   "references": [

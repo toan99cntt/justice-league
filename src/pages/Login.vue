@@ -1,7 +1,16 @@
 <template>
   <q-dialog seamless full-width v-model="show" class="login-dialog" >
     <q-card class="q-px-sm" style="max-width: 500px !important;">
-      <q-card-section  class="q-my-sm">
+      <q-card-section class="text-right q-py-sm q-pr-xs">
+        <q-btn
+          icon="close"
+          flat
+          round
+          size="12px"
+          @click="hideDialog"
+        />
+      </q-card-section>
+      <q-card-section class="q-mb-sm q-pt-none">
         <div class="login">Login</div>
       </q-card-section>
 
@@ -72,7 +81,7 @@ const login = async() =>{
     localStorage.setItem('token_data', res.token);
     authStore.setIsAuthenticated();
     authStore.setUserProfile(res.user);
-    await router.push({ name: 'home' })
+    router.push({ name: 'home' })
   } catch (error: any) {
     if(error.status === 422){
       errors.value = { ...error.data.errors}
@@ -82,6 +91,13 @@ const login = async() =>{
   } finally {
     loading.value = false;
   }
+}
+
+const hideDialog = () => {
+  show.value = false;
+  setTimeout(() => {
+    router.push({ name: 'home' })
+  }, 100)
 }
 </script>
 
@@ -96,7 +112,6 @@ const login = async() =>{
     font-style: normal;
     font-size: 30px;
     line-height: 33px;
-    padding-top: 20px;
   }
   .btn-submit {
     border-radius: 100px;

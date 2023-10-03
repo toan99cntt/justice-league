@@ -14,10 +14,13 @@ export const getCursorKey = (url: string) => {
 }
 
 export const minifyNumber = (val: number) => {
-  const THOUSAND = 1000;
-  const MILLION = 1000000;
-  const BILLION = 1000000000;
-  if(val >= BILLION / 10) return `${(val / BILLION).toFixed(1)}B`
-  if(val >= MILLION / 10) return `${(val / MILLION).toFixed(1)}M`
-  return `${(val / THOUSAND /10).toFixed(1)}K`
+  if(!val) return 0;
+  const units = ['', 'K', 'M', 'G', 'T', 'P', 'E'];
+  let unitIndex = 0;
+  while (val >= 1000 && unitIndex < units.length - 1) {
+    val /= 1000;
+    unitIndex++;
+  }
+  
+  return (unitIndex > 0 ? val.toFixed(1) : val) + units[unitIndex];
 }

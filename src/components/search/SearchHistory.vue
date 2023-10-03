@@ -17,9 +17,9 @@
       </q-item-section>
     </q-item>
   </q-list>
-  <div class="show-full text-center">
+  <div class="show-full text-center" v-show="histories.length >= 5">
     <span class="text-grey-8 " @click="showFull = !showFull">
-      {{ `${showFull ? 'Thu gọn' : 'Xem thêm'}` }} <common-icon name="down" size="7px" class="display-inline"/>
+      {{ `${showFull ? 'Thu gọn' : 'Xem thêm'}` }} <q-icon :name="!showFull ? 'expand_less' : 'expand_more'" size="20px"/>
     </span>
   </div>
 

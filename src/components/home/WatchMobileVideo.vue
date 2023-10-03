@@ -1,86 +1,95 @@
 <template>
-  <q-carousel
-    v-model="slide"
-    vertical
-    transition-prev="slide-down"
-    transition-next="slide-up"
-    swipeable
-    animated
-    v-model:fullscreen="isFullscreen"
-    @wheel="nextVideo"
-    class="videos"
-  >
-    <q-carousel-slide ref="containerRef" :img-src="item.image" class="container q-pa-none" v-for="(item, key) in videos" :key="key" :name="key">
-      <div class="c-video text-center">
-        <q-icon 
-          v-show="!statusVideo.error && !statusVideo.loading && statusVideo.paused" 
-          style="z-index: 9999;"
-          class="absolute-center" 
-          name="play_arrow" 
-          size="46px" 
-          color="white"
-        />
-        <q-icon v-if="statusVideo.error" class="absolute-center" name="warning" size="35px" color="white"/>
-        <q-spinner-dots v-else-if="!statusVideo.error && statusVideo.loading" class="absolute-center" color="white" size="40px" />
-      <video ref="videoRef" class="video" @click="clickVideo()" reload playsinline></video>
+  <div ref="scrollScreen" class="scroll-snap-container fullscreen" :style="{height: `${heightVideo}px !important`}" @scroll="onScroll">
+    <div ref="containerRef" 
+      v-for="(item, key) in videoPlays" 
+      :key="key" 
+      :id="`video-${key}`"
+      :style="{ backgroundImage: `url(${item.image})`}" 
+      class="item container q-pa-none" 
+      @click="clickVideo()"
+    >
+      <div class="c-video text-center" :style="{height: `${heightVideo}px !important`}">
+        <common-icon v-show="statusVideo.paused" size="60px" class="absolute-center" style="z-index: 9999; opacity: 0.5;" name="play"/>
+        <q-spinner-dots v-if="statusVideo.loading" class="absolute-center" color="white" size="40px" />
+        <video ref="videoRef" 
+          class="video" 
+          :style="{height: `${heightVideo}px !important`}"
+          reload
+          playsinline 
+          autoplay muted loop 
+          :poster="item.image"
+        ></video>
       
-      <div ref="orangeBar" class="orange-bar" @click.stop="(event) => setTime(event)">
-        <div id="time-line" :style="{ width: `${percentTime}%` }">
-          <!-- <common-icon id="icon-time-line" name="ellipse" size="7px"/> -->
+        <div v-show="statusVideo.paused "  ref="orangeBar" class="orange-bar" >
+          <q-slider
+            :model-value="percentTime"
+            @change="setTime"
+            :min="0"
+            :max="100"
+            :step="0.1"
+            color="white"
+            track-size="3px"
+            thumb-size="10px"
+          />
         </div>
-      </div>
-
-      <div class="content text-white text-size-13 text-left">
-        <div class="text-size-15">{{ item.user_name }} 
-          <common-icon id="icon-time-line" name="ellipse" size="3px"/>
-          <span class="text-size-13"> {{ formatDate(item.published_date) }}</span>
+  
+        <div class="content text-white text-size-13 text-left">
+          <div class="text-size-15">{{ item.user_name }} 
+            <common-icon id="icon-time-line" name="ellipse" size="3px"/>
+            <span class="text-size-13"> {{ formatDate(item.published_date) }}</span>
+          </div>
+          <div>#{{ item.hashtag }}</div>
+          <div>{{ item.description.slice(0, countTextShow) }}
+            <div v-show="item.description.length > MAXIMUM_TEXT" >
+              <span v-if="countTextShow == MAXIMUM_TEXT" @click.stop="countTextShow = -1">... Readmore </span>
+              <span v-else @click.stop="countTextShow = MAXIMUM_TEXT"> Hide</span>
+            </div>
+          </div>
         </div>
-        <div>#{{ item.hashtag }}</div>
-        <div v-if="!showFullDescription">{{ item.description.slice(0, 30) }} <span @click="showFullDescription = true">... Readmore</span></div>
-        <div v-else>{{ item.description }}</div>
-      </div>
-
-      <div class="menu-left text-center">
-        <div class="avatar">
-          <q-avatar
-            size="40px"
-            class="overlapping"
-          >
-            <img :src="item.image">
-          </q-avatar>
-        </div>
-        <div class="q-mt-md">
-          <q-btn round flat no-caps @click="action('like')">
-            <common-icon name="heart" size="25px"/>
-          </q-btn>
-          <p class="text-white">{{ item.likes }}</p>
-        </div>
-        <div class="q-mt-md">
-          <q-btn round flat no-caps @click="action('save')">
-            <common-icon name="save" size="25px"/>
-          </q-btn>
-          <p class="text-white">{{ item.saves }}</p>
-        </div>
-        <div class="q-mt-md">
-          <q-btn round flat no-caps>
-            <common-icon name="share" size="25px"/>
-          </q-btn>
-          <p class="text-white">Share</p>
-        </div>
-        <div class="q-mt-md">
-          <q-btn round flat no-caps @click="action('block')">
-            <common-icon name="block" size="25px"/>
-          </q-btn>
-          <p class="text-white">Block</p>
+  
+        <div class="menu-left text-center shadow-icon">
+          <div class="relative-position" @click.stop="$router.push({ name: 'modelDetail', params: { id: item.model_id } })">
+            <common-avatar 
+              :name="item.user_name" 
+              :image="item.image"
+              size="45px"
+            />
+            <div v-if="!item.followed" class="btn-follow full-width" :class="{'disable': loadingFollow}" @click.stop="$emit('onFollow', item.model_id)">
+              <q-icon name="add_circle" color="white cursor-pointer" size="18px" />
+            </div>
+          </div>
+          <div class="q-mt-md">
+            <q-btn round flat no-caps @click.stop="action('onLike', item.id)" :disable="loadingLike">
+              <common-icon name="heart" size="25px" :color="item.liked ? 'red' : 'white'"/>
+            </q-btn>
+            <p class="text-white">{{ minifyNumber(item.likes) }}</p>
+          </div>
+          <div class="q-mt-md">
+            <q-btn round flat no-caps @click.stop="action('onSave', item.id)" :disable="loadingSave">
+              <common-icon name="save" size="25px" :color="item.saved ? 'primary' : 'white'"/>
+            </q-btn>
+            <p class="text-white">{{ minifyNumber(item.saves) }}</p>
+          </div>
+          <div class="q-mt-md">
+            <q-btn round flat no-caps>
+              <common-icon name="share" size="25px"/>
+            </q-btn>
+            <p class="text-white">Share</p>
+          </div>
+          <div class="q-mt-md">
+            <q-btn round flat no-caps @click.stop="action('onBlock', item.id)" :disable="loadingHide">
+              <common-icon name="block" size="25px"/>
+            </q-btn>
+            <p class="text-white">Hide</p>
+          </div>
         </div>
       </div>
     </div>
-    </q-carousel-slide>
-  </q-carousel>
+  </div>
 </template>
 
 <script setup lang='ts'>
-import { ref, watch, type PropType, reactive, computed } from 'vue';
+import { ref, watch, type PropType, reactive, computed, watchEffect, onMounted } from 'vue';
 import type { Video } from '@/models/video';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { storeToRefs } from 'pinia';
@@ -88,8 +97,12 @@ import { useRouter } from 'vue-router';
 import { FETCH_VIDEO } from '@/constant/common'
 import { formatDate } from '@/services/utils/date';
 import Hls from 'hls.js';
+import { minifyNumber } from "@/services/utils/common";
+import { useQuasar } from 'quasar'
 
-const emits = defineEmits(['update:modelValue', 'onLike', 'onSave', 'onBlock', 'fetchData'])
+const MAXIMUM_TEXT = 80
+const SCREEN_SIZE = window.innerHeight - 120
+const emits = defineEmits(['update:modelValue','update:videos', 'onLike', 'onSave', 'onBlock', 'fetchData', 'onFollow'])
 const props = defineProps({
   videos: {
     type: Array as PropType<Array<Video>>,
@@ -98,124 +111,186 @@ const props = defineProps({
   modelValue: {
     type: Number,
     default: 0
-  }
+  },
+  change: {
+    type: Number,
+    default: 0
+  },
+  loadingLike: {
+    type: Boolean,
+    default: false
+  },
+  loadingHide: {
+    type: Boolean,
+    default: false
+  },
+  loadingSave: {
+    type: Boolean,
+    default: false
+  },
+  loadingFollow: {
+    type: Boolean,
+    default: false
+  },
 })
 
+const $q = useQuasar()  
 const router = useRouter()
 const authStore = useAuthStore();
 const {isAuthenticated} = storeToRefs(authStore);
 
 const videoRef = ref<Array<HTMLVideoElement>>([])
 const orangeBar = ref<Array<HTMLElement>>([])
+const scrollScreen = ref<HTMLElement | null>(null)
 const showFullDescription = ref(false);
+const countTextShow = ref(MAXIMUM_TEXT)
 const statusVideo = reactive({
   loading: true,
   error: false,
   paused: false,
 })
 const percentTime = ref(0);
-const isFullscreen = ref(true);
-const wheelTimer = ref(0);
+const videoWatched = ref<Number[]>([])
+const heightVideo = ref(SCREEN_SIZE)
 
 const slide = computed({
   get: () => props.modelValue,
   set: (val: Number | String) => emits("update:modelValue", val)
 })
+const videoPlays = computed({
+  get: () => props.videos,
+  set: (val) => emits("update:videos", val)
+})
+
+let timeout: any;
+function debounce(func: any, delay: number) {
+  clearTimeout(timeout);
+  timeout = setTimeout(func, delay);
+}
+
+function onScroll(event: any) {
+  debounce(() => {
+    const domVideo = document.getElementsByClassName('c-video') as any
+    const containerScrollLeft = event.target.scrollTop;
+    if(!containerScrollLeft) {
+      slide.value = 0
+      return
+    } else {
+      const snappedIndex = Math.floor(containerScrollLeft / domVideo[0].offsetHeight);
+      slide.value = snappedIndex;
+    }
+  }, 100)
+}
 
 const clickVideo = () => {
-  if(!videoRef.value[0]) return
-  const paused = videoRef.value[0].paused;
-  if(paused) videoRef.value[0].play();
-  else videoRef.value[0].pause();
+  if(!videoRef.value[slide.value]) return
+  const paused = videoRef.value[slide.value].paused;
+  if(paused) videoRef.value[slide.value].play();
+  else videoRef.value[slide.value].pause();
   statusVideo.paused = !paused;
 }
 
 const addEvent = () => {
-  videoRef.value[0].addEventListener('timeupdate', () => {
-    if(videoRef.value[0].ended) videoRef.value[0].play();
-    percentTime.value = (videoRef.value[0].currentTime / videoRef.value[0].duration) * 100;
+  statusVideo.loading = true;
+  videoRef.value[slide.value].addEventListener('timeupdate', () => {
+    if(videoRef.value.length) percentTime.value = (videoRef.value[slide.value].currentTime / videoRef.value[slide.value].duration) * 100;
   })
 
-  videoRef.value[0].addEventListener('loadeddata', () => {
+  videoRef.value[slide.value].addEventListener('loadeddata', () => {
     statusVideo.loading = false
   }, false)
 }
 
-const setDisplayVideo = () => {
-  const src = props.videos[slide.value].stream_url;
+const setDisplayVideo = (index: number) => {
+  console.log(videoPlays.value);
+  
+  const src = videoPlays.value[index].stream_url;
+  
   if(Hls.isSupported()) {
     const hls = new Hls();
     hls.loadSource(src)
-    hls.attachMedia(videoRef.value[0]);
+    hls.attachMedia(videoRef.value[index]);
     hls.on(Hls.Events.ERROR, () => {
       statusVideo.error = true
-    }); 
-  } else if (videoRef.value[0].canPlayType('application/vnd.apple.mpegurl')) {
-    videoRef.value[0].src = src;
+    });
+  } else if (videoRef.value[index].canPlayType('application/vnd.apple.mpegurl')) {
+    videoRef.value[index].src = src;
   }
-  videoRef.value[0].addEventListener('loadedmetadata',function() {
-    videoRef.value[0].play();
-  });
-  videoRef.value[0].addEventListener('error', function(evt) {
+  videoRef.value[index].addEventListener('error', function(evt) {
     statusVideo.error = true // Object
-});
+  });
+  videoWatched.value.push(videoPlays.value[index].id)
 }
 
-const setTime = (event: any) => {
-  if(!videoRef.value[0]) return
-  videoRef.value[0].currentTime = (event.offsetX / orangeBar.value[0].offsetWidth) * videoRef.value[0].duration
+const setTime = async(evt: number) => {
+  if(!videoRef.value[slide.value]) return
+  videoRef.value[slide.value].currentTime = (evt * videoRef.value[slide.value].duration) / 100
+  await clickVideo()
 }
 
-const action = async (type: 'like'|'save'|'block'  ) =>{
+const action = async (type: 'onLike'|'onSave'|'onBlock', id: number ) =>{ 
   if(!isAuthenticated.value) await router.push({ name: 'login' })
-  if(type ==='like') emits('onLike');
-  else if(type ==='save') emits('onSave');
-  else if(type ==='block') emits('onBlock');
+  if(type == 'onBlock') {
+    videoPlays.value.splice(slide.value, 1)
+    videoWatched.value = videoWatched.value.filter((el) => el == id)
+  }
+  emits(type, id);
 }
 
-const nextVideo = (e: any)=>{
-  clearTimeout(wheelTimer.value);
-  wheelTimer.value = setTimeout(() => {
-    if(!e.deltaY) return
-
-    const delta = e.deltaY;
-    if (delta > 0) {
-      if(slide.value >= (props.videos.length - 1)) return;
-      slide.value ++;
-    }
-    else {
-      if(!slide.value) return;
-      slide.value --;
-    }
-  }, 80)
-}
-
-watch(() => Object.keys(videoRef.value).length, () => {
-  if(!videoRef.value[0]) return
-  percentTime.value = 0;
-  setDisplayVideo()
+const loadVideo = () => {
+  if(!videoRef.value[slide.value]) return
+  if(videoWatched.value.includes(videoPlays.value[slide.value].id)) {
+    videoRef.value[slide.value].play()
+    return
+  }
+  
+  setDisplayVideo(slide.value)
   addEvent()
+}
+
+watchEffect(() => {
+  if(videoPlays.value.length) {
+    loadVideo()
+  }
 })
 
-watch(() => slide.value, async(val) => {
-  statusVideo.loading = true;
+watch(() => $q.screen.height, () => {
+  heightVideo.value = window.innerHeight - 120
+})
+
+const setDefaultValue = (index: number) => {
+  percentTime.value = 0;
   statusVideo.error = false;
   statusVideo.paused = false;
+  countTextShow.value = MAXIMUM_TEXT
   showFullDescription.value = false
-  if((val + FETCH_VIDEO) === (props.videos.length - 1)) emits('fetchData')
+  videoRef.value[index].pause();
+  videoRef.value[index].currentTime = 0;
+}
+
+watch(() => slide.value, async(valNew, valOld) => {
+  setDefaultValue(valOld)
+  if(valNew >= ((videoPlays.value.length - 1) - FETCH_VIDEO)) emits('fetchData')
+})
+
+onMounted(() => {
+  if(slide.value) {
+    const el = document.getElementById(`video-${slide.value}`)
+    el?.scrollIntoView()
+  }
 })
 </script>
 
 <style lang='scss' scoped>
 .videos {
-  padding-top: 65px;
   box-sizing: border-box;
 }
 .container {
   width: 100%;
-  height: 100%;
+  text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.8);
   overflow: hidden;
   position: relative;
+  z-index: 1;
   background-image: url('@/assets/images/bg.png');
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -225,6 +300,7 @@ watch(() => slide.value, async(val) => {
 .c-video {
   width: 100%;
   height: 100%;
+  position: relative;
   background: rgba(17, 17, 17, 0.85);
   backdrop-filter: blur(7.5px);
   .video {
@@ -234,18 +310,25 @@ watch(() => slide.value, async(val) => {
   }
 
   .menu-left {
-    position: fixed;
+    position: absolute;
     right: 10px;
     bottom: 100px;
     z-index: 9999;
     .avatar {
-      border: 2px solid #fff;
       border-radius: 50%;
+    }
+    .btn-follow {
+      position: absolute;
+      bottom: -10px;
+    }
+    .disable {
+      pointer-events: none;
     }
   }
   .content {
     position: absolute;
-    bottom: 120px;
+    bottom: 50px;
+    z-index: 9999;
     max-width: 250px;
     margin-left: 17px;
     #icon-time-line {
@@ -255,16 +338,12 @@ watch(() => slide.value, async(val) => {
   }
   .orange-bar {
     width: 100%;
-    height: 2px;
+    height: 15px;
+    z-index: 9999;
     position: absolute;
-    bottom: 90px;
-    background: rgba(255, 255, 255, 0.2);
-    #time-line {
-      background: #fff;
-      height: 100%;
-      width: 20px;
-      position: relative;
-    }
+    bottom: 16px;
+    display: flex;
+    align-items: center;
   }
 }
 </style>

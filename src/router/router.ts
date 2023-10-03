@@ -7,7 +7,8 @@ import Profile from '@/pages/Profile.vue';
 import Login from '@/pages/Login.vue';
 import Register from '@/pages/Register.vue';
 import Search from '@/pages/Search.vue';
-import UserDetail from '@/pages/UserDetail.vue';
+import ModelDetail from '@/pages/ModelDetail.vue';
+import Follow from '@/pages/Follow.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -21,8 +22,9 @@ const routes: RouteRecordRaw[] = [
           { path: '/', name: "home", component: Home },
           { path: '/explore', name: "explore", component: Explore },
           { path: '/profile', name: "profile", component: Profile, meta: { auth: true } },
+          { path: '/follow', name: "follow", component: Follow, meta: { auth: true } },
           { path: '/search', name: "search", component: Search },
-          { path: '/user-detail', name: "userDetail", component: UserDetail },
+          { path: '/model/:id', name: "modelDetail", component: ModelDetail },
         ]
       },
       {

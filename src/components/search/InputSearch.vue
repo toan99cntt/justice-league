@@ -86,9 +86,3 @@ const search = computed({
   set: (val) => emits('update:modelValue', val)
 })
 </script>
-
-<style>
-.input-search .q-field__control:hover:before {
-  border-color: #ddd !important;
-}
-</style>

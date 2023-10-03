@@ -9,19 +9,20 @@
     <div class="content">
       <div class="ellipsis">#{{ data.hashtag }}</div>
       <div class="ellipsis">{{ data.description }}</div>
-      <div class="row">
-        <div class="col-8 ellipsis">
+      <div style="display: flex;" class="justify-between">
+        <div class=" ellipsis self-center">
           <q-avatar
             size="20px"
             class="overlapping"
           >
-            <img :src="data.image">
+            <img class="avatar" :src="data.image">
           </q-avatar>
           <span 
-            @click.stop="!disableClickName ? $router.push({ name: 'userDetail' }): ''"
+            @click.stop="!disableClickName ? $router.push({ name: 'modelDetail' }): ''"
+            class="text-bold q-pl-xs q-mt-xs"
           >{{ data.user_name }}</span>
         </div>
-        <div class="col-4 text-grey-6 text-right row justify-end">
+        <div class=" text-grey-6 text-right row justify-end" style="min-width: 56px; place-items: center">
           {{ minifyNumber(data.views) }} 
           <common-icon name="heart" color="red" size="10px" class="q-pb-xs icon-heart q-ml-xs"/>
         </div>
@@ -75,10 +76,10 @@ defineProps({
 }
 </style>
 
-<style lang="scss">
+<!-- <style lang="scss">
 .icon-heart {
   svg {
     padding-bottom: 5px;
   }
 }
-</style>
+</style> -->

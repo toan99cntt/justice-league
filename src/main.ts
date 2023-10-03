@@ -12,12 +12,14 @@ import quasarUserOptions from './quasar-options';
 import CommonIcon from './components/common/CommonIcon.vue'
 import CommonInput from './components/common/CommonInput.vue'
 import CommonCard from './components/common/CommonCard.vue'
+import CommonAvatar from './components/common/CommonAvatar.vue'
 
 const app = createApp(App);
 
 app.component("CommonIcon",  CommonIcon);
 app.component("CommonInput",  CommonInput);
 app.component("CommonCard",  CommonCard);
+app.component("CommonAvatar",  CommonAvatar);
 
 app
 .use(createPinia())

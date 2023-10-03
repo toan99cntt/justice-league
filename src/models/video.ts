@@ -7,9 +7,13 @@ export interface Video {
   views: number,
   likes: number,
   saves: number,
+  model_id: number,
   user_name: string,
   user_id: string,
   description: string,
+  liked?: boolean,
+  saved?: boolean
+  followed?: boolean
 }
 
 export interface ParamsHome {

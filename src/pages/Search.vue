@@ -23,7 +23,7 @@
       </div>
 
       <div class="row">
-        <div v-for="item in videos" :key="item.id"  class="col-4 col-md-3 text-size-13 card">
+        <div v-for="item in videos" :key="item.id"  class="col-6 col-sm-4 col-md-3 text-size-13 card">
           <common-card
             :data="item"
           />
@@ -87,6 +87,7 @@ const searchData = async() => {
 .root {
   padding-bottom: 100px;
   padding-top: 5px;
+  margin-top: 74px;
   .search-history {
     position: absolute;
     top: 50px;
